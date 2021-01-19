@@ -1,0 +1,47 @@
+<?php
+
+global $_CONFIG;
+
+$_CONFIG["requireSSL"]=false;
+
+$_CONFIG["LDAP_URI"]="";
+$_CONFIG["LDAP_BASE"]="";
+$_CONFIG["LDAP_DN"]="";
+$_CONFIG["LDAP_SECRET"]='';
+
+
+$_CONFIG["LDAP_USERATTR"]="samaccountname";
+$_CONFIG["LDAP_FILTER"]="(&(objectclass=user))";
+$_CONFIG["LDAP_MEMBER_ATTR"]="member";
+$_CONFIG["LDAP_AUTHORIZED"]=array(
+	"Domain Admins",
+	"Domain Users"
+);
+$_CONFIG["LDAP_FULLNAME_ATTR"]="displayname";
+$_CONFIG["LDAP_DISPLAYED_ATTRS"]=array(
+$_CONFIG["LDAP_FULLNAME_ATTR"]=>"Full Name",
+	"givenname"=>"First Name",
+	"initials"=>"Middle Initial",
+	"sn"=>"Last Name",
+	"samaccountname"=>"User Name",
+	"mail"=>"Email Address",
+	"employeetype"=>"Account Type",
+	"telephonenumber"=>"Telephone Number",
+	"pwdlastset"=>"Password Last Reset",
+	"description"=>"Grade Level",
+	"employeenumber"=>"Student Number",
+	"lastlogontimestamp"=>"Last Logon Time",
+	"memberof"=>"Group Memberships");
+$_CONFIG["DB_HOST"]="";
+$_CONFIG["DB_NAME"]="";
+$_CONFIG["DB_USER"]="";
+$_CONFIG["DB_PASSWORD"]="";
+
+$_CONFIG["DEBUG"]=false;
+$_CONFIG["DEBUG"]=true;
+
+$_CONFIG["TITLE"]="Password Reset";
+
+$_CONFIG["forceUserReset"]=true;
+
+?>
