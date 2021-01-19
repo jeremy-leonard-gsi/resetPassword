@@ -77,7 +77,8 @@ if(isset($_POST["method"])) {
 								$output .= "<span>".convertADTime($user[$key][$a])."</span>";
 								break;
 							case "pwdlastset":
-								$output .= "<span>".convertADTime($user[$key][$a])."</span><button class=\"btn btn-primary ml-2\" data-toggle=\"modal\" data-target=\"#userPasswordsModal\" onclick=\"getUserPasswords('".$user['samaccountname'][0]."')\">History</button>";
+								$output .= "<span>".convertADTime($user[$key][$a])."</span>";
+								if($_CONFIG['HISTORY']) $output .= "<button class=\"btn btn-primary ml-2\" data-toggle=\"modal\" data-target=\"#userPasswordsModal\" onclick=\"getUserPasswords('".$user['samaccountname'][0]."')\">History</button>";
 								break;
 							case "useraccountcontrol":
 								$useraccoutncontrol["Account Disable"]=$user[$key][$a] & 2;
