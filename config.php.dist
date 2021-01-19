@@ -40,6 +40,8 @@ $_CONFIG["DB_PASSWORD"]="";
 $_CONFIG["DEBUG"]=false;
 $_CONFIG["DEBUG"]=true;
 
+$_CONFIG["HISTORY"]=false;
+
 $_CONFIG["TITLE"]="Password Reset";
 
 $_CONFIG["forceUserReset"]=true;
