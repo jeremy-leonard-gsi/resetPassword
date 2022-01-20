@@ -11,9 +11,9 @@ $_CONFIG["requireSSL"]=false;
 $_CONFIG["LDAP_USERATTR"]="samaccountname";
 $_CONFIG["LDAP_FILTER"]="(&(objectclass=user))";
 $_CONFIG["LDAP_MEMBER_ATTR"]="member";
-$_CONFIG["LDAP_AUTHORIZED"]=array("Domain Admins");
+$_CONFIG["LDAP_AUTHORIZED"]=["Domain Admins"];
 $_CONFIG["LDAP_FULLNAME_ATTR"]="displayname";
-$_CONFIG["LDAP_DISPLAYED_ATTRS"]=array(
+$_CONFIG["LDAP_DISPLAYED_ATTRS"]=[
 	$_CONFIG["LDAP_FULLNAME_ATTR"]=>"Full Name",
 	"givenname"=>"First Name",
 	"initials"=>"Middle Initial",
@@ -26,7 +26,8 @@ $_CONFIG["LDAP_DISPLAYED_ATTRS"]=array(
 	"pwdlastset"=>"Password Last Reset",
 	"description"=>"Grade Level",
 	"employeenumber"=>"Student Number",
-	"lastlogontimestamp"=>"Last Logon Time");
+	"lastlogontimestamp"=>"Last Logon Time"
+    ];
 $_CONFIG["DB_HOST"]="localhost";
 $_CONFIG["DB_NAME"]="resetPassworddb";
 $_CONFIG["DB_USER"]="resetPassword";
@@ -37,4 +38,4 @@ $_CONFIG["DEBUG"]=false;
 
 $_CONFIG["TITLE"]="Reset Password System";
 
-?>
+$_CONFIG["forceUserReset"]=true;
