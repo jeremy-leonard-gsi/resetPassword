@@ -17,13 +17,12 @@ class applicationLog {
 	public function logEvent($eventType,$eventMessage){
 		$stmt = $this->DB->prepare("INSERT INTO `eventLog` (`ipAddress`,`eventType`,`eventMessage`) VALUES (?,?,?);");
 		$stmt->bind_param("sss",$_SERVER['REMOTE_ADDR'],$eventType,$eventMessage);
-		$results = $stmt->execute();
+		$stmt->execute();
 	}
 	
 	public function getEvents($limit=25) {
 		$stmt = $this->DB->prepare("SELECT * FROM eventLog LIMIT=?;");
-		//$stmt->bind_param("i",$limit);
-		$results = $stmt->execute();
+		$results = $stmt->execute($limit);
 		while($row = $results->fetch_assoc()){
 			$log[]=$row;		
 		}

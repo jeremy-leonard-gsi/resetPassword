@@ -20,12 +20,14 @@ class authentication{
 		$this->ldap_fullname_attr=$ldap_fullname_attr;
 		if($_CONFIG["DEBUG"]) {
 			ldap_set_option(null, LDAP_OPT_DEBUG_LEVEL, 7);
+                        error_log(print_r($this,true));
 		}else{
 			ldap_set_option(null, LDAP_OPT_DEBUG_LEVEL, 0);
 		}
 		$this->DS = ldap_connect($this->ldap_uri);
 		ldap_set_option($this->DS, LDAP_OPT_REFERRALS, false);
-		ldap_set_option($this->DS, LDAP_OPT_PROTOCOL_VERSION	, 3);
+		ldap_set_option($this->DS, LDAP_OPT_PROTOCOL_VERSION, 3);
+                ldap_set_option($this->DS, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 		return ldap_bind($this->DS, $this->ldap_dn,$this->ldap_secret);
 	}
 	function __destruct() {
@@ -63,15 +65,27 @@ class authentication{
 		}else if  (!isset($_SESSION["authenticated"])){
 			$this->log->logEvent("Login Failed","User $username failed to log in.");		
 		}
+                if($_CONFIG['DEBUG']){
+                    error_log(print_r($this,true));
+                }
 		return $status;
 	}
 	
 	function authorized() {
+                global $_CONFIG;
 		$groups='';
 		$authorized = false;
 		$filter = "(".$this->ldap_member_attr."=".addslashes($this->dn).")";
 		$results = ldap_search($this->DS, $this->ldap_base, $filter);
-		foreach(ldap_get_entries($this->DS,$results) as $group){
+		$groupMemberships = ldap_get_entries($this->DS,$results);
+                if($_CONFIG['DEBUG']){
+                    error_log($groupMemberships['count']);
+                    for($g=0;$g<$groupMemberships['count'];$g++){
+                        error_log($groupMemberships[$g]['dn']);
+                    }
+                }
+                for($g=0;$g<$groupMemberships['count'];$g++){
+                    $group = $groupMemberships[$g];
 			if(in_array($group["cn"][0], $this->ldap_authorized)) {
 				$groups.=$group["cn"][0].",";
 				$authorized = true;

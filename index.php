@@ -12,8 +12,6 @@ require_once("include/userPasswords.class.php");
 
 $appLog = new applicationLog($_CONFIG["DB_HOST"],$_CONFIG["DB_USER"],$_CONFIG["DB_PASSWORD"],$_CONFIG["DB_NAME"]);
 
-
-
 // Check for SSL.
 if($_CONFIG["requireSSL"]){
 	if (!(isset($_SERVER["HTTPS"])) || !($_SERVER["HTTPS"]=="on")){
@@ -35,55 +33,54 @@ if(isset($_POST["password"])) {
 
 if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
 	$auth = new resetPassword($appLog,
-										$_CONFIG["LDAP_URI"],
-										$_CONFIG["LDAP_BASE"],
-										$_CONFIG["LDAP_DN"],
-										$_CONFIG["LDAP_SECRET"],
-										$_CONFIG["LDAP_USERATTR"],
-										$_CONFIG["LDAP_FILTER"],
-										$_CONFIG["LDAP_MEMBER_ATTR"],
-										$_CONFIG["LDAP_AUTHORIZED"],
-										$_CONFIG["LDAP_FULLNAME_ATTR"]);
+        $_CONFIG["LDAP_URI"],
+        $_CONFIG["LDAP_BASE"],
+        $_CONFIG["LDAP_DN"],
+        $_CONFIG["LDAP_SECRET"],
+        $_CONFIG["LDAP_USERATTR"],
+        $_CONFIG["LDAP_FILTER"],
+        $_CONFIG["LDAP_MEMBER_ATTR"],
+        $_CONFIG["LDAP_AUTHORIZED"],
+        $_CONFIG["LDAP_FULLNAME_ATTR"]);
 	$_SESSION["authenticated"] = $auth->doLogin($_SESSION["username"],$_SESSION["password"]);
 	if($_SESSION["authenticated"]) {
-		if($_SESSION["authorized"]=$auth->authorized()) {
-			$module="resetPassword";
-		}
+            if($_SESSION["authorized"]=$auth->authorized()) {
+                $module="resetPassword";
+            }
 	}
 }else {
-	$module = "auth";	
+    $module = "auth";	
 }
 
 if(isset($_POST["action"]) && $_POST["action"]=="doLogout") {
-	$auth->doLogout($_SESSION["username"]);
-	unset($_SESSION["username"]);
-	unset($_SESSION["password"]);
-	unset($_SESSION["authenticated"]);
-	unset($_SESSION["authorized"]);	
-	$module="auth";
+    $auth->doLogout($_SESSION["username"]);
+    unset($_SESSION["username"]);
+    unset($_SESSION["password"]);
+    unset($_SESSION["authenticated"]);
+    unset($_SESSION["authorized"]);	
+    $module="auth";
 }
 
 if(isset($_POST["action"]) && $_POST["action"]=="doResetPassword") {
-	$module="resetPassword";
+    $module="resetPassword";
 }
 
 if(isset($_POST["action"]) && $_POST["action"]=="doEventlog") {
-	$module="eventlog";
+    $module="eventlog";
 }
-
 
 $title = $_CONFIG["TITLE"];			
 
 switch($module) {
-		case "eventlog":
-			include("include/eventlog.php");		
-			break;
-		case "resetPassword":
-			include("include/resetPassword.php");
-			break;			
-		case "auth":
-		default:
-			include("include/auth.php");
-			break;
+    case "eventlog":
+        include("include/eventlog.php");		
+        break;
+    case "resetPassword":
+        include("include/resetPassword.php");
+        break;			
+    case "auth":
+    default:
+        include("include/auth.php");
+        break;
 }
 ?>

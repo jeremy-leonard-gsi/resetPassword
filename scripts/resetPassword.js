@@ -2,6 +2,11 @@ function setUserId(userid) {
 	document.getElementById('user-userid').value=userid;
 }
 
+function updateUAC() {
+    $userdn = document.getElementById('user-userid').value;
+    console.log($userdn);
+}
+
 function updatePassword() {
 	$userdn = document.getElementById('user-userid').value;
 	$password = document.getElementById('user-password1').value;

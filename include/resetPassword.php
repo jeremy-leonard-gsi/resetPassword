@@ -48,7 +48,7 @@ if(isset($_POST["method"])) {
 		case "getUserDetails":
 			$users = $auth->getUserInfo(urldecode($_POST["userid"]));
 			$user = $users[0];
-			$output = "<div class=\"navbar navbar-expand-lg navbar-light bg-light float-right\">";
+			$output = "<div class=\"navbar navbar-expand-lg navbar-light bg-light float-end\">";
 			$output .= "<span class=\"navbar-brand\">".$user[$_CONFIG["LDAP_FULLNAME_ATTR"]][0]."</span>";
 			$output .= "<ul class=\"nav\">";
 			$output .= "<li class=\"nav-item dropdown\">";
@@ -68,7 +68,7 @@ if(isset($_POST["method"])) {
 			foreach($_CONFIG["LDAP_DISPLAYED_ATTRS"] as $key => $label) {
 				if(isset($user[$key]) AND is_array($user[$key])) {
 					if($key!="memberof") {
-						$output .="<tr><th>$label</th><td>";
+						$output .="<tr><th data-value=".$user[$key][0].">$label</th><td>";
 					}
 					for($a=0;$a<$user[$key]["count"];$a++) {
 						switch($key) {
@@ -89,9 +89,19 @@ if(isset($_POST["method"])) {
 								$useraccoutncontrol["Password Never Expires"]=$user[$key][$a] & 65536;
 								$useraccoutncontrol["Password Has Expired"]=$user[$key][$a] & 8388608;
 								foreach($useraccoutncontrol as $uacLabel => $uacValue){
-									$output .= "<span>$uacLabel: ";
-									$output .= $uacValue==0 ? "False": "True";
-									$output .= "<br></span>";
+                                                                    $output .= '<div class="form-check form-switch">'
+                                                                           . '<label class="form-check-label" for="id'.$uacLabel.'">'.$uacLabel.'</label>'
+                                                                           . '<input class="form-check-input" type="checkbox" role="switch" id="id'.$uacLabel.'" name="'.$uacLabel.'"';
+                                                                    if($uacValue !== 0){
+                                                                        $output .= ' checked ';
+                                                                    }
+                                                                    if(in_array($uacLabel,$_CONFIG['allowUACChange'])!==true){
+                                                                        $output .= ' onclick="return false;" ';
+                                                                    }else{
+                                                                        $output .= ' onclick="setUserId(\''.$_POST["userid"].'\');updateUAC('.$uacLabel.');" ';
+                                                                    }
+                                                                    $output .= '" data-state="'.$uacValue.'">'
+                                                                        . '</div>';
 								}								
 								break;
 							case "memberof":
@@ -106,7 +116,7 @@ if(isset($_POST["method"])) {
 					$output .="<tr><th>$label</th><td><span>".$user[$key]."</span></td></tr>";
 				}
 			}
-			$output .= "<tr><th>Reset Password</th><td><button class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#resetPassword\" onclick=\"setUserId('".$_POST["userid"]."');\">Reset Password</button></td></tr>\n";
+			$output .= "<tr><th>Reset Password</th><td><button class=\"btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#resetPassword\" onclick=\"setUserId('".$_POST["userid"]."');\">Reset Password</button></td></tr>\n";
 			$output .= "</table>\n</div>";
 			$output .= "<div class=\"card-body collapse userinfo\" id=\"userGroups\">";
 			$output .= $userGroups;
@@ -140,7 +150,12 @@ include("include/menubar.php");
 			<div class="card" style="min-width: 278px;;">
 				<h5 class="card-header">Users</h5>
 				<div class="card-body">
-					<input onkeyup="getFilteredUsers();" id="filterUsers" class="form-control mr-md-1" type="search" placeholder="Search" aria-label="Filter">
+                                    <input onkeyup="getFilteredUsers();" 
+                                           id="filterUsers" name="filterUsers" 
+                                           class="form-control mr-md-1" 
+                                           type="search" placeholder="Search" 
+                                           aria-label="Filter" 
+                                           autocomplete="off">
 					<ul id="navUsers" class="nav flex-column nav-pills">
 					</ul>				
 				</div>			
@@ -159,7 +174,7 @@ include("include/menubar.php");
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Reset Password</h5>
-						<button type="button" class="close" data-dismiss="modal">×</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 					</div>
 					<div class="modal-body">
 					<div id="passwordAlert" class="alert fade show" style="display: none;" role="alert"></div>
@@ -171,17 +186,17 @@ include("include/menubar.php");
 						<?php
 						}else{
 						?>
-							<div class="custom-control custom-switch">
-								<input id="user-forceResetId" name="forceReset" type="checkbox" class="custom-control-input">
-  								<label class="custom-control-label" for="user-forceResetId">Force user to reset their password on next logon?</label>
-							</div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" name="forceReset" type="checkbox" role="switch" id="user-forceResetId">
+                                                  <label class="form-check-label" for="user-forceResetId">Force user to reset their password on next logon?</label>
+                                                </div>
 					<?php
 					}
 					?>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-						<button id="btnSaveNewPassword" type="submit" class="btn btn-primary" disabled="disabled" data-dismiss="modal" onclick="updatePassword();">Save</button></div>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+						<button id="btnSaveNewPassword" type="submit" class="btn btn-primary" disabled="disabled" data-bs-dismiss="modal" onclick="updatePassword();">Save</button></div>
 				</div>
 			</div>
 		</div>  	
