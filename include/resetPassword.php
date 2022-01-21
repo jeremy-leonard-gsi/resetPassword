@@ -6,9 +6,23 @@ if(isset($_GET["selectedUser"])) {
 }else{
 	$selectedUser=null;
 }
-
 if(isset($_POST["method"])) {	
 	switch($_POST["method"]) {
+                case "updateUAC":
+                        $checked = filter_input(INPUT_POST, 'checked', FILTER_VALIDATE_BOOLEAN);
+                        $userdn = urldecode(filter_input(INPUT_POST, 'userdn', FILTER_SANITIZE_STRING));
+                        $uac = filter_input(INPUT_POST, 'uac', FILTER_SANITIZE_NUMBER_INT);
+                        $value = filter_input(INPUT_POST, 'value', FILTER_SANITIZE_NUMBER_INT);
+                        if($checked){
+                            $newUAC = intval($uac) | intval($value);
+                        }else{
+                            $newUAC = intval($uac) & ~intval($value);
+                        }
+                        $results = $auth->updateUAC($userdn, $newUAC);
+                        header("Content-Type: application/json");
+                        echo $results;
+                        exit();
+                    break;
 		case "setUserPassword":
 			if(isset($_POST["userdn"]) AND isset($_POST["userPassword1"])) {
 				$userDN = urldecode($_POST["userdn"]);
@@ -48,17 +62,20 @@ if(isset($_POST["method"])) {
 		case "getUserDetails":
 			$users = $auth->getUserInfo(urldecode($_POST["userid"]));
 			$user = $users[0];
-			$output = "<div class=\"navbar navbar-expand-lg navbar-light bg-light float-end\">";
+                        $userGroups = '';
+                        $output ='<div class="card-header">';
+			$output .= "<div class=\"navbar navbar-expand-lg navbar-light bg-light float-end\">";
 			$output .= "<span class=\"navbar-brand\">".$user[$_CONFIG["LDAP_FULLNAME_ATTR"]][0]."</span>";
 			$output .= "<ul class=\"nav\">";
 			$output .= "<li class=\"nav-item dropdown\">";
-			$output .= "<a class=\"nav-link dropdown-toggle\" id=\"menuTitle\" href=\"#\" role=\"button\" data-toggle=\"dropdown\">General Information</a>";
+			$output .= "<a class=\"nav-link dropdown-toggle\" id=\"menuTitle\" href=\"#\" role=\"button\" data-bs-toggle=\"dropdown\">General Information</a>";
 			$output .= "<div class=\"dropdown-menu\">";
-			$output .= "<a class=\"dropdown-item\" data-toggle=\"collapse\" data-target=\".userinfo\" href=\"#\">General Information</a>";
-			$output .= "<a class=\"dropdown-item\" data-toggle=\"collapse\" data-target=\".userinfo\" href=\"#\" onclick=\"$( '#menuTitle' ).text('Group Membership');\">Group Memberships</a>";
+			$output .= "<a class=\"dropdown-item\" data-bs-toggle=\"collapse\" data-bs-target=\".userinfo\" href=\"#\">General Information</a>";
+			$output .= "<a class=\"dropdown-item\" data-bs-toggle=\"collapse\" data-bs-target=\".userinfo\" href=\"#\" onclick=\"$( '#menuTitle' ).text('Group Membership');\">Group Memberships</a>";
 			$output .= "</div>";
 			$output .= "</li>";
 			$output .= "</ul>";
+			$output .= "</div>\n";
 			$output .= "</div>\n";
 			$output .= "<div class=\"card-body p-0\">\n";
 			$output .= "<div id=\"userAlert\" class=\"alert fade show\" style=\"display: none;\" role=\"alert\"></div>\n";
@@ -81,26 +98,34 @@ if(isset($_POST["method"])) {
 								if($_CONFIG['HISTORY']) $output .= "<button class=\"btn btn-primary ml-2\" data-toggle=\"modal\" data-target=\"#userPasswordsModal\" onclick=\"getUserPasswords('".$user['samaccountname'][0]."')\">History</button>";
 								break;
 							case "useraccountcontrol":
-								$useraccoutncontrol["Account Disable"]=$user[$key][$a] & 2;
-								$useraccoutncontrol["Account Locked Out"]=$user[$key][$a] & 16;
-								$useraccoutncontrol["Password Not Required"]=$user[$key][$a] & 32;
-								$useraccoutncontrol["User Cannot Change Password"]=$user[$key][$a] & 64;
-								$useraccoutncontrol["Normal Account"]=$user[$key][$a] & 512;
-								$useraccoutncontrol["Password Never Expires"]=$user[$key][$a] & 65536;
-								$useraccoutncontrol["Password Has Expired"]=$user[$key][$a] & 8388608;
+							case "ms-ds-user-account-control-computed":
+								$useraccoutncontrol["Account Disable"]['value']=$user[$key][$a] & 2;
+								$useraccoutncontrol["Account Disable"]['flag']= 2;
+								$useraccoutncontrol["Account Locked Out"]['value']=$user[$key][$a] & 16;
+								$useraccoutncontrol["Account Locked Out"]['flag']= 16;
+								$useraccoutncontrol["Password Not Required"]['value']=$user[$key][$a] & 32;
+								$useraccoutncontrol["Password Not Required"]['flag']= 32;
+								$useraccoutncontrol["User Cannot Change Password"]['value']=$user[$key][$a] & 64;
+								$useraccoutncontrol["User Cannot Change Password"]['flag']= 64;
+								$useraccoutncontrol["Normal Account"]['value']=$user[$key][$a] & 512;
+								$useraccoutncontrol["Normal Account"]['flag']= 512;
+								$useraccoutncontrol["Password Never Expires"]['value']=$user[$key][$a] & 65536;
+								$useraccoutncontrol["Password Never Expires"]['flag']= 65536;
+								$useraccoutncontrol["Password Has Expired"]['value']=$user[$key][$a] & 8388608;
+								$useraccoutncontrol["Password Has Expired"]['flag']= 8388608;
 								foreach($useraccoutncontrol as $uacLabel => $uacValue){
                                                                     $output .= '<div class="form-check form-switch">'
                                                                            . '<label class="form-check-label" for="id'.$uacLabel.'">'.$uacLabel.'</label>'
                                                                            . '<input class="form-check-input" type="checkbox" role="switch" id="id'.$uacLabel.'" name="'.$uacLabel.'"';
-                                                                    if($uacValue !== 0){
+                                                                    if($uacValue['value'] !== 0){
                                                                         $output .= ' checked ';
                                                                     }
                                                                     if(in_array($uacLabel,$_CONFIG['allowUACChange'])!==true){
                                                                         $output .= ' onclick="return false;" ';
                                                                     }else{
-                                                                        $output .= ' onclick="setUserId(\''.$_POST["userid"].'\');updateUAC('.$uacLabel.');" ';
+                                                                        $output .= ' onclick="updateUAC(event,\''.$_POST["userid"].'\',\''.$user[$key][$a].'\',\''.$uacValue['flag'].'\');" ';
                                                                     }
-                                                                    $output .= '" data-state="'.$uacValue.'">'
+                                                                    $output .= '" data-state="'.$uacValue['value'].'">'
                                                                         . '</div>';
 								}								
 								break;
@@ -145,9 +170,9 @@ if(isset($_POST["method"])) {
 include("include/header.php");
 include("include/menubar.php");
 ?>
-		  	<div class="row mt-md-3">	
-	  		<div class="col-md-3">
-			<div class="card" style="min-width: 278px;;">
+                <div class="row mt-md-3 mx-2">	
+                    <div class="col-md-3">
+			<div class="card">
 				<h5 class="card-header">Users</h5>
 				<div class="card-body">
                                     <input onkeyup="getFilteredUsers();" 
@@ -179,8 +204,8 @@ include("include/menubar.php");
 					<div class="modal-body">
 					<div id="passwordAlert" class="alert fade show" style="display: none;" role="alert"></div>
 						<input id="user-userid" name="userid" type="hidden">
-						<input id="user-password1" onblur="validatePassword(document.getElementById('user-password1').value);" name="user-password1" class="form-control mt-1" placeholder="Password" type="password">				
-						<input id="user-password2" onkeyup="validatePassword2(document.getElementById('user-password2').value);" name="user-password2" class="form-control mt-1" placeholder="Retype Password" type="password" >
+                                                <input id="user-password1" onblur="validatePassword(document.getElementById('user-password1').value);" name="user-password1" class="form-control mt-1" placeholder="Password" type="password" autocomplete="new-password">				
+                                                <input id="user-password2" onkeyup="validatePassword2(document.getElementById('user-password2').value);" name="user-password2" class="form-control mt-1" placeholder="Retype Password" type="password" autocomplete="new-password">
 						<?php if(isset($_CONFIG["forceUserReset"]) AND $_CONFIG["forceUserReset"]) {?>
 								<input id="user-forceResetId" name="forceReset" type="checkbox" class="d-none" checked="checked">
 						<?php
@@ -215,7 +240,6 @@ include("include/menubar.php");
 			</div>
 		</div>  	
 	</div>
-</div>
 </div>
 <?php
 include("include/footer.php");

@@ -30,6 +30,20 @@ class resetPassword extends authentication{
 		}
 		return json_encode($return);
 	}
+	public function updateUAC($userDN,$uac) {
+
+            ldap_mod_replace($this->DS, $userDN, ['useraccountcontrol'=>$uac]);
+		$return["number"]=ldap_errno($this->DS);
+		$return["message"]=ldap_error($this->DS);
+		switch($return["number"]) {
+			case 0:
+				$this->log->logEvent("Updated userAccountControl Successfully",$_SESSION["username"]." updated userAccountControl for $userDN to $uac. Status: ".$return["message"]);				
+			break;
+			default:
+				$this->log->logEvent("Update userAccountControl Failed",$_SESSION["username"]." Attempted to update userAccountControl for $userDN to $uac. Status: ".$return["message"]);						
+		}
+		return json_encode($return);
+	}
 }
 
 ?>

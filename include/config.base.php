@@ -39,3 +39,5 @@ $_CONFIG["DEBUG"]=false;
 $_CONFIG["TITLE"]="Reset Password System";
 
 $_CONFIG["forceUserReset"]=true;
+
+$_CONFIG['HISTORY']=false;

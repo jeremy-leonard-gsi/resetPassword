@@ -2,16 +2,17 @@ function setUserId(userid) {
 	document.getElementById('user-userid').value=userid;
 }
 
-function updateUAC() {
-    $userdn = document.getElementById('user-userid').value;
-    console.log($userdn);
+function updateUAC($event, $userdn, $uac, $value) {
+    user = $.post( "index.php", { method: "updateUAC", userdn: $userdn, uac: $uac, value: $value, checked: $event.srcElement.checked } );
+    user.done(function ( data ){        
+        selectUser($userdn, data);
+    });
 }
 
 function updatePassword() {
 	$userdn = document.getElementById('user-userid').value;
 	$password = document.getElementById('user-password1').value;
 	$forceUserReset = document.getElementById('user-forceResetId').checked;
-	console.log($forceUserReset);
 	$user = $.post( "index.php" , { method: "setUserPassword", userdn: $userdn, userPassword1: $password, forceReset: $forceUserReset} );
 	$user.done(function ( data ){
 		
