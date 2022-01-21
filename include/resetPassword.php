@@ -175,12 +175,14 @@ include("include/menubar.php");
 			<div class="card">
 				<h5 class="card-header">Users</h5>
 				<div class="card-body">
+                                    <form autocomplete="off">                                        
                                     <input onkeyup="getFilteredUsers();" 
                                            id="filterUsers" name="filterUsers" 
                                            class="form-control mr-md-1" 
                                            type="search" placeholder="Search" 
                                            aria-label="Filter" 
                                            autocomplete="off">
+                                    </form>
 					<ul id="navUsers" class="nav flex-column nav-pills">
 					</ul>				
 				</div>			
