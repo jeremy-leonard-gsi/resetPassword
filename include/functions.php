@@ -32,8 +32,12 @@ function encodeADPassword($password) {
 	$len = strlen($newpassword);
 	$newPassw = "";
 	for($i=0;$i<$len;$i++){
-   	$newPassw .= "{$newpassword{$i}}\000";
+   	$newPassw .= "{$newpassword[$i]}\000";
    }
    return $newPassw;
+}
+
+function convertCammelToSpace($str){
+    return ucwords(preg_replace('/([A-Z])/', " $0", $str)," \t\r\n\f\v><");
 }
 ?>

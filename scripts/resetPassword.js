@@ -2,9 +2,16 @@ function setUserId(userid) {
 	document.getElementById('user-userid').value=userid;
 }
 
+function resetBadPwdCount($event, $userdn){
+    $user = $.post( "index.php", { module: 'doResetPassword', method: "resetBadPwdCount", userdn: $userdn } );
+    $user.done(function ( data ){
+        selectUser($userdn, data);
+    });    
+}
+
 function updateUAC($event, $userdn, $uac, $value) {
-    user = $.post( "index.php", { method: "updateUAC", userdn: $userdn, uac: $uac, value: $value, checked: $event.srcElement.checked } );
-    user.done(function ( data ){        
+    $user = $.post( "index.php", { module: 'doResetPassword', method: "updateUAC", userdn: $userdn, uac: $uac, value: $value, checked: $event.srcElement.checked } );
+    $user.done(function ( data ){
         selectUser($userdn, data);
     });
 }
@@ -13,7 +20,7 @@ function updatePassword() {
 	$userdn = document.getElementById('user-userid').value;
 	$password = document.getElementById('user-password1').value;
 	$forceUserReset = document.getElementById('user-forceResetId').checked;
-	$user = $.post( "index.php" , { method: "setUserPassword", userdn: $userdn, userPassword1: $password, forceReset: $forceUserReset} );
+	$user = $.post( "index.php" , { module: 'doResetPassword', method: "setUserPassword", userdn: $userdn, userPassword1: $password, forceReset: $forceUserReset} );
 	$user.done(function ( data ){
 		
 		$userdn = document.getElementById('user-userid').value;
@@ -27,7 +34,7 @@ function updatePassword() {
 }
 function selectUser($userid,result) {
 	result = (typeof result !== 'undefined') ?  result : null;
-	$users = $.post( "index.php" , { method: "getUserDetails", userid: $userid } );
+	$users = $.post( "index.php" , { module: 'doResetPassword', method: "getUserDetails", userid: $userid } );
 	$users.done(function ( data ) {		
 		$( '#userDetails' ).empty().append( data );
 		
@@ -47,7 +54,7 @@ function selectUser($userid,result) {
 }
 function getUserPasswords($username,result) {
 	result = (typeof result !== 'undefined') ?  result : null;
-	$passwords = $.post( "index.php" , { method: "getUserPasswords", userid: $username } );
+	$passwords = $.post( "index.php" , { module: 'doResetPassword', method: "getUserPasswords", userid: $username } );
 	$passwords.done(function ( data ) {		
 		$( '#userPasswordData' ).empty().append( data );
 		console.log(data);
@@ -70,7 +77,7 @@ function getUserPasswords($username,result) {
 function getFilteredUsers(event) {
 	$filter = document.getElementById('filterUsers').value;
 	if ($filter.length > 2) {
-	$users = $.post( "index.php" , { method: "getFilteredUsers", filter: $filter } );
+	$users = $.post( "index.php" , { module: "doResetPassword", method: "getFilteredUsers", filter: $filter } );
 	$users.done(function ( data ) {		
 		$( '#navUsers' ).empty().append( data );		
 	});

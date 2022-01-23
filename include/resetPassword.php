@@ -23,6 +23,14 @@ if(isset($_POST["method"])) {
                         echo $results;
                         exit();
                     break;
+                case 'resetBadPwdCount':
+                    error_log('resetPwdCount, resetPassword');
+                    $userdn = urldecode(filter_input(INPUT_POST, 'userdn', FILTER_SANITIZE_STRING));
+                    $results = $auth->resetBadPwdCount($userdn);
+                    header("Content-Type: application/json");
+                    echo $results;
+                    exit();                    
+                    break;
 		case "setUserPassword":
 			if(isset($_POST["userdn"]) AND isset($_POST["userPassword1"])) {
 				$userDN = urldecode($_POST["userdn"]);
@@ -90,6 +98,7 @@ if(isset($_POST["method"])) {
 					for($a=0;$a<$user[$key]["count"];$a++) {
 						switch($key) {
 							case "lastlogontimestamp":
+                                                        case "badpasswordtime":
 							case "lastlogon":
 								$output .= "<span>".convertADTime($user[$key][$a])."</span>";
 								break;
@@ -101,18 +110,16 @@ if(isset($_POST["method"])) {
 							case "ms-ds-user-account-control-computed":
 								$useraccoutncontrol["Account Disable"]['value']=$user[$key][$a] & 2;
 								$useraccoutncontrol["Account Disable"]['flag']= 2;
-								$useraccoutncontrol["Account Locked Out"]['value']=$user[$key][$a] & 16;
-								$useraccoutncontrol["Account Locked Out"]['flag']= 16;
 								$useraccoutncontrol["Password Not Required"]['value']=$user[$key][$a] & 32;
 								$useraccoutncontrol["Password Not Required"]['flag']= 32;
-								$useraccoutncontrol["User Cannot Change Password"]['value']=$user[$key][$a] & 64;
-								$useraccoutncontrol["User Cannot Change Password"]['flag']= 64;
-								$useraccoutncontrol["Normal Account"]['value']=$user[$key][$a] & 512;
-								$useraccoutncontrol["Normal Account"]['flag']= 512;
+//								$useraccoutncontrol["User Cannot Change Password"]['value']=$user[$key][$a] & 64;
+//								$useraccoutncontrol["User Cannot Change Password"]['flag']= 64;
+//								$useraccoutncontrol["Normal Account"]['value']=$user[$key][$a] & 512;
+//								$useraccoutncontrol["Normal Account"]['flag']= 512;
 								$useraccoutncontrol["Password Never Expires"]['value']=$user[$key][$a] & 65536;
 								$useraccoutncontrol["Password Never Expires"]['flag']= 65536;
-								$useraccoutncontrol["Password Has Expired"]['value']=$user[$key][$a] & 8388608;
-								$useraccoutncontrol["Password Has Expired"]['flag']= 8388608;
+//								$useraccoutncontrol["Password Has Expired"]['value']=$user[$key][$a] & 8388608;
+//								$useraccoutncontrol["Password Has Expired"]['flag']= 8388608;
 								foreach($useraccoutncontrol as $uacLabel => $uacValue){
                                                                     $output .= '<div class="form-check form-switch">'
                                                                            . '<label class="form-check-label" for="id'.$uacLabel.'">'.$uacLabel.'</label>'
@@ -132,6 +139,9 @@ if(isset($_POST["method"])) {
 							case "memberof":
 									$userGroups .= "<span>".$user[$key][$a]."</span><br>";								
 								break;
+                                                        case "badpwdcount":
+                                                            $output .= "<span>".$user[$key][$a].'</span><button class="btn btn-primary ms-3" onclick="resetBadPwdCount(event,\''.$_POST["userid"].'\' )">Reset to Zero</button>';
+                                                            break;
 							default:							
 							$output .= "<span>".$user[$key][$a]."</span>";
 						}			

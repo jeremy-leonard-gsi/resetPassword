@@ -44,6 +44,20 @@ class resetPassword extends authentication{
 		}
 		return json_encode($return);
 	}
+        public function resetBadPwdCount($userDN){
+            error_log('Resetting badPwcCount');
+            ldap_mod_replace($this->DS, $userDN, ['lockouttime'=>0]);
+		$return["number"]=ldap_errno($this->DS);
+		$return["message"]=ldap_error($this->DS);
+		switch($return["number"]) {
+			case 0:
+				$this->log->logEvent("Cleared Logout Successfully",$_SESSION["username"]." Cleared logout for $userDN. Status: ".$return["message"]);				
+			break;
+			default:
+				$this->log->logEvent("Clear Lockout Failed",$_SESSION["username"]." Attempted to clear logout for $userDN. Status: ".$return["message"]);						
+		}
+		return json_encode($return);
+        }
 }
 
 ?>

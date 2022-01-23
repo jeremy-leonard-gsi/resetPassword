@@ -14,7 +14,7 @@ include("include/header.php");
 						echo "<div class=\"alert alert-danger\">You account is not authorized to access this site.</div>";
 					}						
 					?>
-					<form id="frmLogin" action="<?php echo $_SERVER["REQUEST_URI"];?> " method="post" autocomplete="off">
+					<form id="frmLogin" action="index.php?module=<?=filter_input(INPUT_GET,'module', FILTER_SANITIZE_STRING) ?? 'doResetPassword'?> " method="post" autocomplete="off">
 						<input name="username" type="text" class="form-control" placeholder="Username" autofocus autocomplete="off">					
 						<input name="password" type="password" class="form-control mt-md-2" placeholder="Password" >
 						<button class="btn btn-primary form-control mt-md-2">Login</button>					

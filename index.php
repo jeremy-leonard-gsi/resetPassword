@@ -1,7 +1,7 @@
 <?php
 session_start();
-$module="";
 
+error_log('Including Scripts.');
 include("include/config.base.php");
 include("config.php");
 include_once("include/functions.php");
@@ -9,8 +9,16 @@ include_once("include/auth.class.php");
 include_once("include/resetPassword.class.php");
 require_once("include/log.class.php");
 require_once("include/userPasswords.class.php");
+require_once('include/request.class.php');
+
+$request = new request;
+$module = $request->module ?? 'auth';
+
+error_log('Creating appLog');
 
 $appLog = new applicationLog($_CONFIG["DB_HOST"],$_CONFIG["DB_USER"],$_CONFIG["DB_PASSWORD"],$_CONFIG["DB_NAME"]);
+
+error_log('Checking for SSL requirements.');
 
 // Check for SSL.
 if($_CONFIG["requireSSL"]){
@@ -20,7 +28,7 @@ if($_CONFIG["requireSSL"]){
 }
 
 //Move submitted data from _POST to _SESSION
-
+error_log('Moving _POST to _SESSION');
 if(isset($_POST["username"])) {
 	$_SESSION["username"] = $_POST["username"];
 }
@@ -30,6 +38,8 @@ if(isset($_POST["password"])) {
 }
 
 // Test the username and password.
+
+error_log('Testing for authentication');
 
 if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
 	$auth = new resetPassword($appLog,
@@ -43,44 +53,34 @@ if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
         $_CONFIG["LDAP_AUTHORIZED"],
         $_CONFIG["LDAP_FULLNAME_ATTR"]);
 	$_SESSION["authenticated"] = $auth->doLogin($_SESSION["username"],$_SESSION["password"]);
-	if($_SESSION["authenticated"]) {
-            if($_SESSION["authorized"]=$auth->authorized()) {
-                $module="resetPassword";
-            }
+	if($_SESSION["authenticated"] !== true AND $_SESSION["authorized"]=$auth->authorized() !== true) {
+            $module="auth";
+            error_log('Not Authenticated 1');
 	}
 }else {
     $module = "auth";	
+    error_log('Not Authenticated 2');
 }
+error_log('Setting Title');
 
-if(isset($_POST["action"]) && $_POST["action"]=="doLogout") {
-    $auth->doLogout($_SESSION["username"]);
-    unset($_SESSION["username"]);
-    unset($_SESSION["password"]);
-    unset($_SESSION["authenticated"]);
-    unset($_SESSION["authorized"]);	
-    $module="auth";
-}
+$title = $_CONFIG["TITLE"];
 
-if(isset($_POST["action"]) && $_POST["action"]=="doResetPassword") {
-    $module="resetPassword";
-}
+error_log($module);
 
-if(isset($_POST["action"]) && $_POST["action"]=="doEventlog") {
-    $module="eventlog";
-}
-
-$title = $_CONFIG["TITLE"];			
-
-switch($module) {
-    case "eventlog":
-        include("include/eventlog.php");		
-        break;
-    case "resetPassword":
+switch($module){
+    case 'doResetPassword':
         include("include/resetPassword.php");
-        break;			
-    case "auth":
+        break;
+    case 'doEventLog';
+        include("include/eventlog.php");
+        break;
+    case 'doLogout':
+        $auth->doLogout($_SESSION["username"]);
+        unset($_SESSION["username"]);
+        unset($_SESSION["password"]);
+        unset($_SESSION["authenticated"]);
+        unset($_SESSION["authorized"]);
+        header('Location: /');
     default:
         include("include/auth.php");
-        break;
 }
-?>

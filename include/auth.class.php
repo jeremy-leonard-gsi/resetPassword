@@ -18,16 +18,16 @@ class authentication{
 		$this->ldap_member_attr=$ldap_member_attr;
 		$this->ldap_authorized=$ldap_authorized;
 		$this->ldap_fullname_attr=$ldap_fullname_attr;
-		if($_CONFIG["DEBUG"]) {
+		if($_CONFIG["DEBUG"]> 1) {
 			ldap_set_option(null, LDAP_OPT_DEBUG_LEVEL, 7);
                         error_log(print_r($this,true));
 		}else{
 			ldap_set_option(null, LDAP_OPT_DEBUG_LEVEL, 0);
 		}
+                ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 		$this->DS = ldap_connect($this->ldap_uri);
 		ldap_set_option($this->DS, LDAP_OPT_REFERRALS, false);
 		ldap_set_option($this->DS, LDAP_OPT_PROTOCOL_VERSION, 3);
-                ldap_set_option($this->DS, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 		return ldap_bind($this->DS, $this->ldap_dn,$this->ldap_secret);
 	}
 	function __destruct() {
@@ -96,7 +96,7 @@ class authentication{
 				$this->error = "You aren't authorized to use this site.";
 				$this->errno = 99;
 				$this->log->logEvent("Authorization Failed",$this->username." is not authorized to access this site.");			
-			}else{
+			}else if(isset($_SESSION['authorized'])!==true){
 				$this->log->logEvent("Authorization Success",$this->username." is authorized to access this site.");			
 			}
 		return $authorized;

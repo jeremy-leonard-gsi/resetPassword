@@ -18,11 +18,42 @@ class applicationLog {
 		$stmt = $this->DB->prepare("INSERT INTO `eventLog` (`ipAddress`,`eventType`,`eventMessage`) VALUES (?,?,?);");
 		$stmt->bind_param("sss",$_SERVER['REMOTE_ADDR'],$eventType,$eventMessage);
 		$stmt->execute();
+                $stmt->close();
 	}
-	
-	public function getEvents($limit=25) {
-		$stmt = $this->DB->prepare("SELECT * FROM eventLog LIMIT=?;");
-		$results = $stmt->execute($limit);
+        
+        public function getEventStart(){
+            $results = $this->DB->query("SELECT DATE_FORMAT(MIN(eventTime),'%Y-%m-%d') AS startTime FROM eventLog;");
+            return $results->fetch_assoc()['startTime'];
+        }
+        public function getEventEnd(){
+            $results = $this->DB->query("SELECT DATE_FORMAT(MAX(eventTime),'%Y-%m-%d') AS endTime FROM eventLog;");
+            return $results->fetch_assoc()['endTime'];
+        }
+        
+        
+	public function getEventCount($start=null,$end=null,$filter='%'){
+            error_log('Start: '.$start);
+            error_log('End: '.$end);
+            error_log('Filter: '.$filter);
+            $start=$start ?? $this->getEventStart();
+            $end=$end ?? $this->getEventEnd();
+            $stmt = $this->DB->prepare("SELECT COUNT(*) AS `Total` FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ?;");
+            $stmt->execute([$end, $start, $filter]);
+            $results = $stmt->get_result();
+            return $results->fetch_assoc()['Total'];            
+        }
+	public function getEvents($limit=10, $page=1, $start=null, $end=null, $filter='%') {
+                error_log('Limit: '.$limit);
+                error_log('Page: '.$page);
+                error_log('Start: '.$start);
+                error_log('End: '.$end);
+                error_log('Filter: '.$filter);
+                
+                $start=$start ?? $this->getEventStart();
+                $end=$end ?? $this->getEventEnd();
+		$stmt = $this->DB->prepare("SELECT * FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ? ORDER BY eventTime DESC LIMIT ?, ?;");
+		$stmt->execute([$end, $start, $filter, $page, $limit]);
+                $results = $stmt->get_result();
 		while($row = $results->fetch_assoc()){
 			$log[]=$row;		
 		}

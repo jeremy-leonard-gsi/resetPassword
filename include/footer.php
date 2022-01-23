@@ -3,7 +3,10 @@
     <?php
     if(isset($_CONFIG['DEBUG']) AND $_CONFIG['DEBUG']){
         echo "<!--\n";
+        print_r($_GET);
+        print_r($_POST);
         print_r($_REQUEST);
+        print_r($_SERVER);
         print_r($_SESSION);
         echo "-->\n";
     }

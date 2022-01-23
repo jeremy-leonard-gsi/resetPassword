@@ -41,3 +41,13 @@ $_CONFIG["TITLE"]="Reset Password System";
 $_CONFIG["forceUserReset"]=true;
 
 $_CONFIG['HISTORY']=false;
+
+$_CONFIG['allowUACChange']=[
+                                'Account Disable',
+                                'Account Locked Out',
+                                'Password Not Required',
+                                'User Cannot Change Password',
+                                'Normal Account',
+                                'Password Never Expires',
+                                'Password Has Expired',
+                            ];
