@@ -52,7 +52,7 @@ class applicationLog {
                 
                 $start=$start ?? $this->getEventStart();
                 $end=$end ?? $this->getEventEnd();
-		$stmt = $this->DB->prepare("SELECT * FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ? ORDER BY eventTime DESC LIMIT ?, ?;");
+		$stmt = $this->DB->prepare("SELECT * FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ? ORDER BY id DESC LIMIT ?, ?;");
                 $stmt->bind_param('sssii', $end, $start, $filter, $page, $limit);
 		$stmt->execute();
                 $results = $stmt->get_result();

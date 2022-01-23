@@ -71,11 +71,11 @@ foreach($logEntries as $row){
                 <nav aria-label="Page navigation example">
                   <ul class="pagination justify-content-end mt-md-3">
                     <li class="page-item"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='1';document.getElementById('filterForm').submit();">&lt;&lt;</a></li>
-                    <li class="page-item <?=$page==1 ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page-1?>';document.getElementById('filterForm').submit();">&lt;</a></li>
+                    <li class="page-item <?=$page<=$limit ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page-$limit?>';document.getElementById('filterForm').submit();">&lt;</a></li>
                     <li class="page-item"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
                     <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item <?=$page==$total ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page+1?>';document.getElementById('filterForm').submit();">&gt;</a></li>
+                    <li class="page-item <?=$page>=$total ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page+$limit?>';document.getElementById('filterForm').submit();">&gt;</a></li>
                     <li class="page-item"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$total?>';document.getElementById('filterForm').submit();">&gt;&gt;</a></li>
                   </ul>
                 </nav>
