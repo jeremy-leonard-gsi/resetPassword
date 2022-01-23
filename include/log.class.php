@@ -38,7 +38,8 @@ class applicationLog {
             $start=$start ?? $this->getEventStart();
             $end=$end ?? $this->getEventEnd();
             $stmt = $this->DB->prepare("SELECT COUNT(*) AS `Total` FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ?;");
-            $stmt->execute([$end, $start, $filter]);
+            $stmt->bind_param('sss', $end, $start, $filter);
+            $stmt->execute();
             $results = $stmt->get_result();
             return $results->fetch_assoc()['Total'];            
         }
@@ -52,7 +53,8 @@ class applicationLog {
                 $start=$start ?? $this->getEventStart();
                 $end=$end ?? $this->getEventEnd();
 		$stmt = $this->DB->prepare("SELECT * FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ? ORDER BY eventTime DESC LIMIT ?, ?;");
-		$stmt->execute([$end, $start, $filter, $page, $limit]);
+                $stmt->bind_param('sssii', $end, $start, $filter, $page, $limit);
+		$stmt->execute();
                 $results = $stmt->get_result();
 		while($row = $results->fetch_assoc()){
 			$log[]=$row;		
