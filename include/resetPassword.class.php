@@ -51,10 +51,10 @@ class resetPassword extends authentication{
 		$return["message"]=ldap_error($this->DS);
 		switch($return["number"]) {
 			case 0:
-				$this->log->logEvent("Cleared Logout Successfully",$_SESSION["username"]." Cleared logout for $userDN. Status: ".$return["message"]);				
+				$this->log->logEvent("Cleared Lockout Successfully",$_SESSION["username"]." Cleared lockout for $userDN. Status: ".$return["message"]);				
 			break;
 			default:
-				$this->log->logEvent("Clear Lockout Failed",$_SESSION["username"]." Attempted to clear logout for $userDN. Status: ".$return["message"]);						
+				$this->log->logEvent("Clear Lockout Failed",$_SESSION["username"]." Attempted to clear lockout for $userDN. Status: ".$return["message"]);						
 		}
 		return json_encode($return);
         }

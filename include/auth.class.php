@@ -53,18 +53,22 @@ class authentication{
 		}
 		$ldapresult = ldap_search($this->DS,$this->ldap_base,$filter);
 		$user = ldap_get_entries($this->DS, $ldapresult);
-		$this->fullName = $user[0][$this->ldap_fullname_attr][0];
-		$dn = $user[0]["dn"];
-		$this->dn=$dn;
-		$status = ldap_bind($this->DS, $dn,$password);
-		$this->error = ldap_error($this->DS);
-		$this->errno = ldap_errno($this->DS);
-		// logging
-		if($this->errno==0 AND !isset($_SESSION["authenticated"])){
-			$this->log->logEvent("Login Successful","User $username successfully logged in.");
-		}else if  (!isset($_SESSION["authenticated"])){
-			$this->log->logEvent("Login Failed","User $username failed to log in.");		
-		}
+                if($user['count']==1){
+                    $this->fullName = $user[0][$this->ldap_fullname_attr][0];
+                    $dn = $user[0]["dn"];
+                    $this->dn=$dn;
+                    $status = ldap_bind($this->DS, $dn,$password);
+                    $this->error = ldap_error($this->DS);
+                    $this->errno = ldap_errno($this->DS);
+                    // logging
+                    if($this->errno==0 AND !isset($_SESSION["authenticated"])){
+                            $this->log->logEvent("Login Successful","User $username successfully logged in.");
+                    }else if  (!isset($_SESSION["authenticated"])){
+                            $this->log->logEvent("Login Failed","User $username failed to log in.");		
+                    }
+                }else{
+                    $this->log->logEvent("Login Failed","User $username failed to log in. User not found or multiple entries found.");		
+                }
                 if($_CONFIG['DEBUG']){
                     error_log(print_r($this,true));
                 }
