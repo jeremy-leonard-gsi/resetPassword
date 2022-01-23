@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-error_log('Including Scripts.');
 include("include/config.base.php");
 include("config.php");
 include_once("include/functions.php");
@@ -14,11 +13,7 @@ require_once('include/request.class.php');
 $request = new request;
 $module = $request->module ?? 'auth';
 
-error_log('Creating appLog');
-
 $appLog = new applicationLog($_CONFIG["DB_HOST"],$_CONFIG["DB_USER"],$_CONFIG["DB_PASSWORD"],$_CONFIG["DB_NAME"]);
-
-error_log('Checking for SSL requirements.');
 
 // Check for SSL.
 if($_CONFIG["requireSSL"]){
@@ -28,7 +23,6 @@ if($_CONFIG["requireSSL"]){
 }
 
 //Move submitted data from _POST to _SESSION
-error_log('Moving _POST to _SESSION');
 if(isset($_POST["username"])) {
 	$_SESSION["username"] = $_POST["username"];
 }
@@ -38,8 +32,6 @@ if(isset($_POST["password"])) {
 }
 
 // Test the username and password.
-
-error_log('Testing for authentication');
 
 if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
 	$auth = new resetPassword($appLog,
@@ -56,20 +48,15 @@ if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
 	if($_SESSION["authenticated"]){
             if(($_SESSION["authorized"]=$auth->authorized())!=true) {
             $module="auth";
-            error_log('Not Authenticated 1');
             }
 	}else{
             $module="auth";
         }
 }else {
     $module = "auth";	
-    error_log('Not Authenticated 2');
 }
-error_log('Setting Title');
 
 $title = $_CONFIG["TITLE"];
-
-error_log($module);
 
 switch($module){
     case 'doResetPassword':
