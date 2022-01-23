@@ -84,7 +84,7 @@ switch($module){
         unset($_SESSION["password"]);
         unset($_SESSION["authenticated"]);
         unset($_SESSION["authorized"]);
-        header('Location: /');
+        header('Location: '.$_SERVER['SCRIPT_NAME']);
     default:
         include("include/auth.php");
 }
