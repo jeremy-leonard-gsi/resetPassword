@@ -37,22 +37,22 @@ foreach($logEntries as $row){
 ?>
 <div class="container-fluid">
     <form id="filterForm" method="post">
-        <div class="row g-4 align-items-center ms-3">
+        <div class="row g-1 g-md-3 align-items-center ms-3">
             <div class="col-auto">
                 <label class="form-label" for="from-date">From Date</label>
             </div>
             <div class="col-auto">
-                <input id="from-date" name="from-date" value="<?=$start?>" class="form-control form-control-sm" type="date" placeholder="From-Date" onchange="document.getElementById('filterForm').submit();">
+                <input id="from-date" name="from-date" value="<?=$start?>" class="form-control form-control-sm" type="date" placeholder="From-Date" onchange="document.getElementById('pageId').value=1;document.getElementById('filterForm').submit();">
             </div>
             <div class="col-auto">
                 <label class="to-label" for="to-date">To Date</label>
             </div>
             <div class="col-auto">
-                <input id="to-date" name="to-date" value="<?=$end?>" class="form-control form-control-sm" type="date" placeholder="To-Date" onchange="document.getElementById('filterForm').submit();">
+                <input id="to-date" name="to-date" value="<?=$end?>" class="form-control form-control-sm" type="date" placeholder="To-Date" onchange="document.getElementById('pageId').value=1;document.getElementById('filterForm').submit();">
             </div>
             <div class="col-auto">Entries per Page</div>
             <div class="col-auto">
-                <select name="limit" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit();" aria-label=".form-select-sm example">
+                <select name="limit" id="limit" class="form-select form-select-sm" onchange="document.getElementById('pageId').value=1;document.getElementById('filterForm').submit();" aria-label=".form-select-sm example">
                   <option value="10" <?=$limit == 10 ? 'selected' : '' ?> >10</option>
                   <option value="20" <?=$limit == 20 ? 'selected' : '' ?> >20</option>
                   <option value="50" <?=$limit == 50 ? 'selected' : '' ?> >50</option>
@@ -61,25 +61,28 @@ foreach($logEntries as $row){
                 </select>
             </div>
             <div class="col-auto">
-                <span>Total Pages: <?=$total ?></span>
-            </div>
-            <div class="col-auto">
-                <input class="form-control form-control-sm" type="search" name="filter" placeholder="Search" value="<?=filter_input(INPUT_POST,'filter', FILTER_SANITIZE_STRING) ?>" onkeyup="setTimeout(function () {document.getElementById('filterForm').submit() }, 1500);"> 
+                <input class="form-control form-control-sm" type="search" name="filter" id="filter" placeholder="Search" value="<?=filter_input(INPUT_POST,'filter', FILTER_SANITIZE_STRING) ?>" onkeyup="setTimeout(function () {document.getElementById('pageId').value=1;document.getElementById('filterForm').submit() }, 1500);"> 
             </div>
             <div class="col-auto">
                 <input value="<?=$page?>" id="pageId" name="page" type="hidden">
                 <nav aria-label="Page navigation example">
                   <ul class="pagination justify-content-end mt-md-3">
                     <li class="page-item"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='1';document.getElementById('filterForm').submit();">&lt;&lt;</a></li>
-                    <li class="page-item <?=$page<=$limit ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page-$limit?>';document.getElementById('filterForm').submit();">&lt;</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item <?=$page>=$total ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page+$limit?>';document.getElementById('filterForm').submit();">&gt;</a></li>
+                    <li class="page-item <?=$page<=1 ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page-1?>';document.getElementById('filterForm').submit();">&lt;</a></li>
+                    <li class="page-item"><span class="page-link">Page <?=$page?> of <?=$total?></span></li>
+                    <li class="page-item <?=$page>=$total ? 'disabled' : '' ?>"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$page+1?>';document.getElementById('filterForm').submit();">&gt;</a></li>
                     <li class="page-item"><a class="page-link" href="#" onclick="document.getElementById('pageId').value='<?=$total?>';document.getElementById('filterForm').submit();">&gt;&gt;</a></li>
                   </ul>
                 </nav>
             </div>
+            <div class="col-auto"><button class="btn btn-primary" type="reset" onclick="
+                document.getElementById('from-date').disabled='on';
+                document.getElementById('to-date').disabled='on';
+                document.getElementById('filter').disabled='on';
+                document.getElementById('limit').disabled='on';
+                document.getElementById('pageId').disabled='on';
+                document.getElementById('filterForm').submit();
+              ">Clear</button></div>
         </div>
     </form>
     <div class="table-responsive-lg">
