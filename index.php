@@ -53,10 +53,14 @@ if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
         $_CONFIG["LDAP_AUTHORIZED"],
         $_CONFIG["LDAP_FULLNAME_ATTR"]);
 	$_SESSION["authenticated"] = $auth->doLogin($_SESSION["username"],$_SESSION["password"]);
-	if($_SESSION["authenticated"] !== true AND $_SESSION["authorized"]=$auth->authorized() !== true) {
+	if($_SESSION["authenticated"]){
+            if(($_SESSION["authorized"]=$auth->authorized())!=true) {
             $module="auth";
             error_log('Not Authenticated 1');
-	}
+            }
+	}else{
+            $module="auth";
+        }
 }else {
     $module = "auth";	
     error_log('Not Authenticated 2');
