@@ -1,9 +1,10 @@
 <?php
 class applicationLog {
 
-	private $dbhost,$dbuser,$dbpassword,$dbname,$DB;
+	private $dbhost,$dbuser,$dbpassword,$dbname,$DB,$enabled;
 	
-	public function __construct($dbhost,$dbuser,$dbpassword,$dbname) {
+	public function __construct($dbhost,$dbuser,$dbpassword,$dbname,$enabled=true) {
+            if($enabled){
 		$this->dbhost=$dbhost;
 		$this->dbuser=$dbuser;
 		$this->dbpassword=$dbpassword;
@@ -13,37 +14,55 @@ class applicationLog {
     		die('Connect Error (' . $this->DB->connect_errno . ') '
          	   . $this->DB->connect_error);
 		}
+                $this->enabled=true;
+            }else{
+                $this->enabled=false;
+            }
 	}
 	public function logEvent($eventType,$eventMessage){
+            if($this->enabled){
 		$stmt = $this->DB->prepare("INSERT INTO `eventLog` (`ipAddress`,`eventType`,`eventMessage`) VALUES (?,?,?);");
 		$stmt->bind_param("sss",$_SERVER['REMOTE_ADDR'],$eventType,$eventMessage);
 		$stmt->execute();
                 $stmt->close();
+            }
 	}
         
         public function getEventStart(){
-            $results = $this->DB->query("SELECT DATE_FORMAT(MIN(eventTime),'%Y-%m-%d') AS startTime FROM eventLog;");
-            return $results->fetch_assoc()['startTime'];
+            if($this->enabled){
+                $results = $this->DB->query("SELECT DATE_FORMAT(MIN(eventTime),'%Y-%m-%d') AS startTime FROM eventLog;");
+                return $results->fetch_assoc()['startTime'];
+            }else{
+                return null;
+            }
         }
         public function getEventEnd(){
-            $results = $this->DB->query("SELECT DATE_FORMAT(MAX(eventTime),'%Y-%m-%d') AS endTime FROM eventLog;");
-            return $results->fetch_assoc()['endTime'];
+            if($this->enabled){
+                $results = $this->DB->query("SELECT DATE_FORMAT(MAX(eventTime),'%Y-%m-%d') AS endTime FROM eventLog;");
+                return $results->fetch_assoc()['endTime'];
+            }else{
+                return null;
+            }
         }
-        
-        
+                
 	public function getEventCount($start=null,$end=null,$filter='%'){
-            error_log('Start: '.$start);
-            error_log('End: '.$end);
-            error_log('Filter: '.$filter);
-            $start=$start ?? $this->getEventStart();
-            $end=$end ?? $this->getEventEnd();
-            $stmt = $this->DB->prepare("SELECT COUNT(*) AS `Total` FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ?;");
-            $stmt->bind_param('sss', $end, $start, $filter);
-            $stmt->execute();
-            $results = $stmt->get_result();
-            return $results->fetch_assoc()['Total'];            
+            if($this->enabled){
+                error_log('Start: '.$start);
+                error_log('End: '.$end);
+                error_log('Filter: '.$filter);
+                $start=$start ?? $this->getEventStart();
+                $end=$end ?? $this->getEventEnd();
+                $stmt = $this->DB->prepare("SELECT COUNT(*) AS `Total` FROM eventLog WHERE eventTime <= ? AND eventTime >= ? AND eventMessage like ?;");
+                $stmt->bind_param('sss', $end, $start, $filter);
+                $stmt->execute();
+                $results = $stmt->get_result();
+                return $results->fetch_assoc()['Total'];
+            }else{
+                return null;
+            }
         }
 	public function getEvents($limit=10, $page=1, $start=null, $end=null, $filter='%') {
+            if($this->enabled){
                 error_log('Limit: '.$limit);
                 error_log('Page: '.$page);
                 error_log('Start: '.$start);
@@ -64,6 +83,9 @@ class applicationLog {
 			$log[]=$row;		
 		}
 		return $log;	
+            }else{
+                return null;
+            }
 	}
 }
 ?>
