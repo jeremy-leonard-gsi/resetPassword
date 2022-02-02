@@ -76,12 +76,10 @@ function getUserPasswords($username,result) {
 
 function getFilteredUsers(event) {
 	$filter = document.getElementById('filterUsers').value;
-	if ($filter.length > 2) {
 	$users = $.post( "index.php" , { module: "doResetPassword", method: "getFilteredUsers", filter: $filter } );
 	$users.done(function ( data ) {		
 		$( '#navUsers' ).empty().append( data );		
 	});
-}
 }
 function validatePassword($password) {
 	$complexity = 0;

@@ -13,7 +13,7 @@
  */
 class request {
     
-    private $filter;
+    public $filter;
     
     public function __construct($filter=FILTER_DEFAULT) {
         $this->filter=$filter;

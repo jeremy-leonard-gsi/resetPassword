@@ -1,11 +1,7 @@
 <?php
-if(isset($_GET["selectedUser"])) {
-	$selectedUser=$_GET["selectedUser"];
-}elseif(isset($_POST["selectedUser"])) {
-	$selectedUser=$_POST["selectedUser"];
-}else{
-	$selectedUser=null;
-}
+$request->filter=FILTER_SANITIZE_STRING;
+$selectUser=$request->selectedUser;
+
 if(isset($_POST["method"])) {	
 	switch($_POST["method"]) {
                 case "updateUAC":
@@ -143,7 +139,7 @@ if(isset($_POST["method"])) {
                                                             $output .= "<span>".$user[$key][$a].'</span><button class="btn btn-primary ms-3" onclick="resetBadPwdCount(event,\''.$_POST["userid"].'\' )">Reset to Zero</button>';
                                                             break;
 							default:							
-							$output .= "<span>".$user[$key][$a]."</span>";
+							$output .= "<div>".$user[$key][$a]."</div>";
 						}			
 					}
 					$output .= "</td></tr>";	
@@ -186,7 +182,7 @@ include("include/menubar.php");
 				<h5 class="card-header">Users</h5>
 				<div class="card-body">
                                     <form autocomplete="off">                                        
-                                    <input onkeyup="getFilteredUsers();" 
+                                    <input onkeyup="setTimeout(getFilteredUsers(),1500);" 
                                            id="filterUsers" name="filterUsers" 
                                            class="form-control mr-md-1" 
                                            type="search" placeholder="Search" 
