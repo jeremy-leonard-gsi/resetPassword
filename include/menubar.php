@@ -8,7 +8,9 @@
                 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" ><i class="fas fa-user"></i>&nbsp;<?php echo $auth->fullName;?></button>
                 <div class="dropdown-menu">
                         <a class="dropdown-item" href="#" onclick="document.getElementById('doResetPassword').submit(); return false;">Reset Passwords</a>			
-                        <a class="dropdown-item" href="#" onclick="document.getElementById('doEventLog').submit(); return false;">Event Log</a>			
+                        <?php if($_CONFIG['LOGGING']){ ?>
+                            <a class="dropdown-item" href="#" onclick="document.getElementById('doEventLog').submit(); return false;">Event Log</a>
+                        <?php }?>
                         <a class="dropdown-item" href="#" onclick="document.getElementById('doLogout').submit(); return false;">Logout</a>			
                 </div>		
         </div>
