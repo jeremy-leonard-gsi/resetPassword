@@ -31,7 +31,12 @@ $_CONFIG["LDAP_FULLNAME_ATTR"]=>"Full Name",
 	"description"=>"Grade Level",
 	"employeenumber"=>"Student Number",
 	"lastlogontimestamp"=>"Last Logon Time",
-	"memberof"=>"Group Memberships");
+	"memberof"=>"Group Memberships",
+        "useraccountcontrol"=>"User Account Control",
+        "badpwdcount"=>"Bad Password Count",
+        "badpasswordtime"=>"Bad Password Time"
+        );
+$_CONFIG["logging"]=true;
 $_CONFIG["DB_HOST"]="";
 $_CONFIG["DB_NAME"]="";
 $_CONFIG["DB_USER"]="";
