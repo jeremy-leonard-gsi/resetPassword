@@ -140,7 +140,7 @@ if(isset($_POST["method"])) {
                                                             break;
                                                         case "mobile":
                                                         case "telephonenumber":
-                                                            $output .= '<div><a href="tel:'.$user[$key][$a].'>"'.$user[$key][$a].'</a></div>';
+                                                            $output .= '<div><a href="tel:'.$user[$key][$a].'">'.$user[$key][$a].'</a></div>';
                                                             break;
                                                         case "mail":
                                                             $output .= '<div><a href="mailto:'.$user[$key][$a].'">'.$user[$key][$a].'</a></div>';
