@@ -138,6 +138,13 @@ if(isset($_POST["method"])) {
                                                         case "badpwdcount":
                                                             $output .= "<span>".$user[$key][$a].'</span><button class="btn btn-primary ms-3" onclick="resetBadPwdCount(event,\''.$_POST["userid"].'\' )">Reset to Zero</button>';
                                                             break;
+                                                        case "mobile":
+                                                        case "telephonenumber":
+                                                            $output .= '<div><a href="tel:'.$user[$key][$a].'>'.$user[$key][$a].'</a></div>';
+                                                            break;
+                                                        case "mail":
+                                                            $output .= '<div><a href="tel:'.$user[$key][$a].'>'.$user[$key][$a].'</a></div>';
+                                                            break;
 							default:							
 							$output .= "<div>".$user[$key][$a]."</div>";
 						}			
