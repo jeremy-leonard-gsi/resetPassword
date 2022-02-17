@@ -143,7 +143,7 @@ if(isset($_POST["method"])) {
                                                             $output .= '<div><a href="tel:'.$user[$key][$a].'>'.$user[$key][$a].'</a></div>';
                                                             break;
                                                         case "mail":
-                                                            $output .= '<div><a href="tel:'.$user[$key][$a].'>'.$user[$key][$a].'</a></div>';
+                                                            $output .= '<div><a href="mailto:'.$user[$key][$a].'>'.$user[$key][$a].'</a></div>';
                                                             break;
 							default:							
 							$output .= "<div>".$user[$key][$a]."</div>";
