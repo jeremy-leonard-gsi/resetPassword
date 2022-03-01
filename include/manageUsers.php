@@ -4,6 +4,9 @@ $selectUser=$request->selectedUser;
 
 if(isset($_POST["method"])) {	
 	switch($_POST["method"]) {
+                case "addUser":
+                    
+                    break;
                 case "updateUAC":
                         $checked = filter_input(INPUT_POST, 'checked', FILTER_VALIDATE_BOOLEAN);
                         $userdn = urldecode(filter_input(INPUT_POST, 'userdn', FILTER_SANITIZE_STRING));
@@ -186,7 +189,7 @@ include("include/menubar.php");
                 <div class="row mt-md-3 mx-2">	
                     <div class="col-md-3">
 			<div class="card">
-				<h5 class="card-header">Users</h5>
+                            <h5 class="card-header">Users<?php if($_CONFIG['ADDUSER']) {echo '<a class="link float-end" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#AddUser"><img src="images/glyphicons-7-user-add.png" alt="Add User">';} ?></a></h5>
 				<div class="card-body">
                                     <form autocomplete="off">                                        
                                     <input onkeyup="setTimeout(getFilteredUsers(),1500);" 
@@ -257,5 +260,8 @@ include("include/menubar.php");
 	</div>
 </div>
 <?php
+if($_CONFIG['ADDUSER']){
+    include("addUser.php");
+}
 include("include/footer.php");
 ?>

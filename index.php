@@ -23,12 +23,12 @@ if($_CONFIG["requireSSL"]){
 }
 
 //Move submitted data from _POST to _SESSION
-if(isset($_POST["username"])) {
-	$_SESSION["username"] = $_POST["username"];
+if(filter_input(INPUT_POST, "username") !==false AND filter_input(INPUT_POST,'method')==='doLogin') {
+	$_SESSION["username"] = filter_input(INPUT_POST, "username");
 }
 
-if(isset($_POST["password"])) {
-	$_SESSION["password"] = $_POST["password"];
+if(filter_input(INPUT_POST,"password") !== false AND filter_input(INPUT_POST,'method')==='doLogin') {
+	$_SESSION["password"] = filter_input(INPUT_POST,"password");
 }
 
 // Test the username and password.
@@ -59,8 +59,8 @@ if(isset($_SESSION["username"]) && isset($_SESSION["password"])) {
 $title = $_CONFIG["TITLE"];
 
 switch($module){
-    case 'doResetPassword':
-        include("include/resetPassword.php");
+    case 'doManageUsers':
+        include("include/manageUsers.php");
         break;
     case 'doEventLog';
         include("include/eventlog.php");
