@@ -37,7 +37,7 @@ $_CONFIG["LDAP_FULLNAME_ATTR"]=>"Full Name",
         "badpasswordtime"=>"Bad Password Time"
         );
 $_CONFIG['allowUACChange']=['Account Disable','Password Not Required','Password Never Expires'];
-$_CONFIG["logging"]=true;
+$_CONFIG["LOGGING"]=true;
 $_CONFIG["DB_HOST"]="";
 $_CONFIG["DB_NAME"]="";
 $_CONFIG["DB_USER"]="";
