@@ -7,9 +7,45 @@ class resetPassword extends authentication{
 		return ldap_get_entries($this->DS,$results);
 	}
         public function getAllOUs(){
-            $filter = '(&(|(objectclass='.implode($this->CONFIG['CONTAINERS'],')(objectclass=').')))';
+            $filter = '(&(|';
+            foreach($this->CONFIG['CONTAINERS'] AS $container){
+                if($container[0]=='!'){
+                }else{
+                    $filter .= '(objectclass='.$container.')';
+                }
+            }
+            $filter .= '))';
             $results = ldap_search($this->DS,$this->ldap_base,$filter,['name']);
             return ldap_get_entries($this->DS, $results);
+        }
+        public function getTree($base=null){
+            if(is_null($base)){
+                $tree[$this->ldap_base]['dn']=$this->ldap_base;
+                $tree[$this->ldap_base]['children']=$this->getTree($this->ldap_base);
+                return $tree;
+            }
+            $filter = '(&(|';
+            foreach($this->CONFIG['CONTAINERS'] AS $container){
+                if($container[0]=='!'){
+                }else{
+                    $filter .= '(objectclass='.$container.')';
+                }
+            }
+            $filter .= ')';
+            $filter .= '(!(|(name=System)(name=ForeignSecurityPrincipals)(name=Keys)(name=Managed Service Accounts)(name=Program Data)(name=ImportedUsers)))';
+            $filter .= ')';
+            $tree=false;
+            $results = ldap_list($this->DS,$base,$filter,['name','dn']);
+            $containers = ldap_get_entries($this->DS, $results);
+            if($containers['count']>0){
+                for($o=0;$o<$containers['count'];$o++){
+                    $tree[$containers[$o]['name'][0]]['dn']=$containers[$o]['dn'];
+                    $tree[$containers[$o]['name'][0]]['children']=$this->getTree($containers[$o]['dn']);
+                }
+//            }else{
+//                $tree[$base]='';
+            }
+            return $tree;
         }
 	public function getFilteredUsers($token) {
 		$filter = "(&".$this->ldap_filter."(".$this->ldap_fullname_attr."=*$token*))";

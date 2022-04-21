@@ -28,12 +28,12 @@ $_CONFIG["LDAP_DISPLAYED_ATTRS"]=[
         "badpwdcount"=>"Bad Password Count",
         "badpasswordtime"=>"Bad Password Time",
     ];
-$_CONFIG["DB_HOST"]="localhost";
-$_CONFIG["DB_NAME"]="resetPassworddb";
-$_CONFIG["DB_USER"]="resetPassword";
-$_CONFIG["DB_PASSWORD"]="nLOsdfljkuq5D799EY3";
+$_CONFIG["DB_HOST"]="";
+$_CONFIG["DB_NAME"]="";
+$_CONFIG["DB_USER"]="";
+$_CONFIG["DB_PASSWORD"]="";
 
-$_CONFIG["TITLE"]="Reset Password System";
+$_CONFIG["TITLE"]="User Management System";
 
 $_CONFIG["forceUserReset"]=true;
 
@@ -48,7 +48,7 @@ $_CONFIG['allowUACChange']=[
                                 'Password Never Expires',
                                 'Password Has Expired',
                             ];
-$_CONFIG["LOGGING"]=true;
+$_CONFIG["LOGGING"]=false;
 
 $_CONFIG["ADDUSER"]=true;
 
@@ -198,4 +198,4 @@ $_CONFIG['addUserFields']=[
     ],
 ];
 
-$_CONFIG["CONTAINERS"]=['domain','organizationalunit'];
+$_CONFIG["CONTAINERS"]=['domain','organizationalunit','container'];

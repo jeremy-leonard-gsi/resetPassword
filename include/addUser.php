@@ -8,8 +8,10 @@
 
 $containers = $auth->getAllOUs();
     for($ou=0;$ou<$containers['count'];$ou++){
-        $ous[$containers[$ou]['dn']]=$containers[$ou]['name'][0];
+        $ous[$containers[$ou]['dn']]=$containers[$ou]['dn'];
     }
+$tree = $auth->getTree();
+    
 sort($ous,SORT_FLAG_CASE | SORT_NATURAL);
 
 $fields = '<div class="row">';
@@ -29,20 +31,6 @@ foreach($_CONFIG['addUserFields'] as $field => $fieldOptions){
             $fields .= sprintf('<option>Chose a(n) %s</option>',$fieldOptions["displayName"]);
             foreach ($fieldOptions['data'] as $name){
                 $fields .= sprintf('<option value="%s">%s</option>',htmlentities($name),htmlentities($name));
-            }
-            $fields .= '</select>';
-            break;
-        case 'dn':
-            $fields .= sprintf('<label for="%sId">%s</Label>',$field,$fieldOptions['displayName']);
-            $fields .= sprintf('<select class="form-select" id="%sId" name="%s" autocomplete="off"',$field,$field);
-            if($fieldOptions['required']){
-                $fields .= ' required>';
-            }else{
-                $fields .= '>';
-            }
-            $fields .= sprintf('<option>Chose a(n) %s</option>',$fieldOptions["displayName"]);
-            foreach ($ous as $ou => $name){
-                $fields .= sprintf('<option value="%s">%s</option>',htmlentities(urlencode($ou)),htmlentities($name));
             }
             $fields .= '</select>';
             break;
@@ -80,10 +68,25 @@ foreach($_CONFIG['addUserFields'] as $field => $fieldOptions){
             }            
             $fields .= '</textarea>';
             break;
+        case 'dn':
+            $fields .= sprintf('<label for="%sId">%s</Label>',$field,$fieldOptions['displayName']);
+            $fields .= '<div class="input-group">';
+            $fields .= sprintf('<input type="text" class="form-control form-control-sm" id="%sId" name="%s" placeholder="%s" autocomplete="off"',
+                    $field,
+                    $field,
+                    $fieldOptions['displayName']);
+            if($fieldOptions['required']){
+                $fields .= ' required>';
+            }else{
+                $fields .= '>';
+            }
+            $fields .= '<button class="btn btn-outline-secondary btn-sm" id="button-browse" data-bs-toggle="modal" data-bs-target="#OU-Picker">Browse</button>';
+            $fields .= '</div>';
+            break;
         case 'text':
         default:
             $fields .= sprintf('<label for="%sId">%s</Label>',$field,$fieldOptions['displayName']);
-            $fields .= sprintf('<input type="text" class="form-control form-control-sm" id="%sId" name="%s" placeholder="%s" autocomplete="off"',
+            $fields .= sprintf('<input type="text" class="form-control form-control-sm mb-3" id="%sId" name="%s" placeholder="%s" autocomplete="off"',
                     $field,
                     $field,
                     $fieldOptions['displayName']);
@@ -121,3 +124,23 @@ $fields .= '</div>';
         </div>
     </div>
 </div>
+<div class="modal fade" id="OU-Picker" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" autocomplete="off">
+                <div class="modal-header">
+                    <h5 class="modal-title">Choose OU</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?=buildTree($tree) ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Select</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

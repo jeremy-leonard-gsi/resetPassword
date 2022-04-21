@@ -13,7 +13,11 @@ require_once('include/request.class.php');
 $request = new request;
 $module = $request->module ?? 'auth';
 
-$appLog = new applicationLog($_CONFIG["DB_HOST"],$_CONFIG["DB_USER"],$_CONFIG["DB_PASSWORD"],$_CONFIG["DB_NAME"],$_CONFIG['LOGGING']);
+$appLog = new applicationLog($_CONFIG["DB_HOST"],
+        $_CONFIG["DB_USER"],
+        $_CONFIG["DB_PASSWORD"],
+        $_CONFIG["DB_NAME"],
+        $_CONFIG['LOGGING']);
 
 // Check for SSL.
 if($_CONFIG["requireSSL"]){
