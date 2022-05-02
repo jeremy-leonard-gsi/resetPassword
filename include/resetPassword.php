@@ -188,8 +188,8 @@ include("include/menubar.php");
 			<div class="card">
 				<h5 class="card-header">Users</h5>
 				<div class="card-body">
-					<div class="input-group">
-                                    <form autocomplete="off">                                        
+                    <form autocomplete="off">                                        
+						<div class="input-group">
                                     <input onkeyup="setTimeout(getFilteredUsers(),1500);" 
                                            id="filterUsers" name="filterUsers" 
                                            class="form-control mr-md-1" 
@@ -197,8 +197,8 @@ include("include/menubar.php");
                                            aria-label="Filter" 
                                            autocomplete="off">
 									<button class="btn btn-outline" type="button" onclick="getFilteredUsers();return false;">Search</button>
-                                    </form>
-					</div>
+						</div>
+                    </form>
 					<ul id="navUsers" class="nav flex-column nav-pills">
 					</ul>				
 				</div>			
