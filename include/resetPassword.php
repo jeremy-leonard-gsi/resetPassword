@@ -190,7 +190,7 @@ include("include/menubar.php");
 				<div class="card-body">
                     <form autocomplete="off">                                        
 						<div class="input-group">
-                                    <input onkeyup="setTimeout(getFilteredUsers(),1500);" 
+                                    <input  
                                            id="filterUsers" name="filterUsers" 
                                            class="form-control mr-md-1" 
                                            type="search" placeholder="Search" 
