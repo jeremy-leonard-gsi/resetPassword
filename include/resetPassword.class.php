@@ -8,6 +8,9 @@ class resetPassword extends authentication{
 	}
 	public function getFilteredUsers($token) {
 		$filter = "(&".$this->ldap_filter."(|(".$this->ldap_fullname_attr."=*$token*)(".$this->ldap_userattr."=*$token*)))";
+		if($this->CONFIG['DEBUG']){
+			error_log($filter);
+		}
 		$results = ldap_search($this->DS,$this->ldap_base,$filter, [], 0, 50, 60);
 		return ldap_get_entries($this->DS,$results);
 	}
