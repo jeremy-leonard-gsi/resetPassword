@@ -195,6 +195,7 @@ include("include/menubar.php");
                                            type="search" placeholder="Search" 
                                            aria-label="Filter" 
                                            autocomplete="off">
+									<button type="button" onclick="getFilteredUsers();return false;">Search</button>
                                     </form>
 					<ul id="navUsers" class="nav flex-column nav-pills">
 					</ul>				

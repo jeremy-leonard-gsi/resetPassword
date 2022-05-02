@@ -81,6 +81,7 @@ function getFilteredUsers(event) {
 	$users.done(function ( data ) {		
 		$( '#navUsers' ).empty().append( data );		
 	});
+	return false;
 }
 function validatePassword($password) {
 	$complexity = 0;
