@@ -7,6 +7,7 @@ class authentication{
 
 	function __construct($log,$ldap_uri,$ldap_base,$ldap_dn,$ldap_secret,$ldap_userattr,$ldap_filter,$ldap_member_attr,$ldap_authorized,$ldap_fullname_attr,$ldap_page_size=100) {
 		global $_CONFIG;
+		$this->CONFIG = $_CONFIG;
 		$this->log = $log;
 		$this->ldap_page_size=$ldap_page_size;	
 		$this->ldap_uri=$ldap_uri;
