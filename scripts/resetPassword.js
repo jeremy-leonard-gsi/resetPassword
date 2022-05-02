@@ -75,6 +75,7 @@ function getUserPasswords($username,result) {
 }
 
 function getFilteredUsers(event) {
+	$( '#navUsers').empty().append( 'Searching . . .');
 	$filter = document.getElementById('filterUsers').value;
 	$users = $.post( "index.php" , { module: "doResetPassword", method: "getFilteredUsers", filter: $filter } );
 	$users.done(function ( data ) {		
