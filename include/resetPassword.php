@@ -188,7 +188,7 @@ include("include/menubar.php");
 			<div class="card">
 				<h5 class="card-header">Users</h5>
 				<div class="card-body">
-                    <form autocomplete="off">                                        
+                    <form autocomplete="off" onsubmit="return false;">                                        
 						<div class="input-group">
                                     <input  
                                            id="filterUsers" name="filterUsers" 
