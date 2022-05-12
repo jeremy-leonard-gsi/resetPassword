@@ -16,6 +16,14 @@ function updateUAC($event, $userdn, $uac, $value) {
     });
 }
 
+function updatePhoto($event, $userdn){
+    $photoPath = $( '#photoPathId' ).val();
+    $user = $.post( "index.php", { module: 'doResetPassword', method: "updatePhoto", userdn: $userdn, photoPath: $photoPath } );
+    $user.done(function ( data ){
+        selectUser($userdn, data);
+    });
+}
+
 function updatePassword() {
 	$userdn = document.getElementById('user-userid').value;
 	$password = document.getElementById('user-password1').value;

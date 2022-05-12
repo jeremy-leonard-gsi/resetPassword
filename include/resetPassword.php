@@ -4,6 +4,14 @@ $selectUser=$request->selectedUser;
 
 if(isset($_POST["method"])) {	
 	switch($_POST["method"]) {
+                case "updatePhoto":
+                    $userdn = urldecode(filter_input(INPUT_POST, 'userdn', FILTER_SANITIZE_STRING));
+                    $photoPath = urldecode(filter_input(INPUT_POST, 'photoPath', FILTER_SANITIZE_STRING));
+                    $results = $auth->updatePhoto($userdn,$photoPath);
+                    header("Content-Type: application/json");
+                    echo $results;
+                    exit();                                        
+                    break;
                 case "updateUAC":
                         $checked = filter_input(INPUT_POST, 'checked', FILTER_VALIDATE_BOOLEAN);
                         $userdn = urldecode(filter_input(INPUT_POST, 'userdn', FILTER_SANITIZE_STRING));
@@ -20,7 +28,6 @@ if(isset($_POST["method"])) {
                         exit();
                     break;
                 case 'resetBadPwdCount':
-                    error_log('resetPwdCount, resetPassword');
                     $userdn = urldecode(filter_input(INPUT_POST, 'userdn', FILTER_SANITIZE_STRING));
                     $results = $auth->resetBadPwdCount($userdn);
                     header("Content-Type: application/json");
@@ -86,6 +93,10 @@ if(isset($_POST["method"])) {
 			$output .= "<div class=\"card border-0\">";
 			$output .= "<div class=\"card-body collapse show userinfo\" id=\"generalInfo\">";		
 			$output .="<table class=\"table\">";
+                        if(!array_key_exists('photo', $user)){
+                            $user['photo'][0]='';
+                            $user['photo']['count']=1;
+                        }
 			foreach($_CONFIG["LDAP_DISPLAYED_ATTRS"] as $key => $label) {
 				if(isset($user[$key]) AND is_array($user[$key])) {
 					if($key!="memberof") {
@@ -144,6 +155,12 @@ if(isset($_POST["method"])) {
                                                             break;
                                                         case "mail":
                                                             $output .= '<div><a href="mailto:'.$user[$key][$a].'">'.$user[$key][$a].'</a></div>';
+                                                            break;
+                                                        case "photo":
+                                                            $output .= '<div class="input-group">';
+                                                            $output .= '<input type="text" class="form-control" id="photoPathId" value="'.$user[$key][$a].'">';
+                                                            $output .= '<button class="btn btn-outline-primary" type="button" id="button-photo" onclick="updatePhoto(event,\''.$_POST["userid"].'\',\''.$user[$key][$a].'\');">Save</button>';
+                                                            $output .= '</div>';
                                                             break;
 							default:							
 							$output .= "<div>".$user[$key][$a]."</div>";

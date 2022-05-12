@@ -48,7 +48,6 @@ class resetPassword extends authentication{
 		return json_encode($return);
 	}
         public function resetBadPwdCount($userDN){
-            error_log('Resetting badPwcCount');
             ldap_mod_replace($this->DS, $userDN, ['lockouttime'=>0]);
 		$return["number"]=ldap_errno($this->DS);
 		$return["message"]=ldap_error($this->DS);
@@ -60,6 +59,19 @@ class resetPassword extends authentication{
 				$this->log->logEvent("Clear Lockout Failed",$_SESSION["username"]." Attempted to clear lockout for $userDN. Status: ".$return["message"]);						
 		}
 		return json_encode($return);
+        }
+        public function updatePhoto($userDN, $photoPath){
+            ldap_mod_replace($this->DS, $userDN, ['photo'=>$photoPath]);
+		$return["number"]=ldap_errno($this->DS);
+		$return["message"]=ldap_error($this->DS);
+		switch($return["number"]) {
+			case 0:
+				$this->log->logEvent("Set Photo Path Success",$_SESSION["username"]." Set Photo Path for $userDN. Status: ".$return["message"]);				
+			break;
+			default:
+				$this->log->logEvent("Set Photo Failed",$_SESSION["username"]." Attempted to set photo path for $userDN. Status: ".$return["message"]);						
+		}
+		return json_encode($return);            
         }
 }
 
